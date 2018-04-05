@@ -39,6 +39,9 @@ class Example(QWidget):
     def init_UI(self):
         uic.loadUi(uiFile, self)
 
+        self.start_server.setDefault(False)
+        self.start_server.clicked.connect(self.start)
+
         self.setWindowTitle("PixArk Server Manager")
 
     def start(self):
