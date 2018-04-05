@@ -56,18 +56,19 @@ class Example(QWidget):
         players_no = self.players_no.text()
         if not os.path.isdir(server_path):
             os.chdir(self.steam_cmd)
-            subprocess.Popen(["start steamcmd.exe +login anonymous +force_install_dir {0} +app_update 824360 validate ".
-                             format(server_path)],
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.STDOUT,
-                             shell=True,
-                             bufsize=0)
-        subprocess.Popen(["start steamcmd.exe +login anonymous +force_install_dir {0} +app_update 824360 validate ".
-                         format(server_path)],
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT,
-                         shell=True,
-                         bufsize=0)
+            subprocess.call("start cmd /K steamcmd.exe +login anonymous +force_install_dir {0} +app_update 824360 validate ".
+                            format(server_path),
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,
+                            shell=True,
+                            cwd=self.steam_cmd,
+                            bufsize=0)
+        # subprocess.Popen(["start steamcmd.exe +login anonymous +force_install_dir {0} +app_update 824360 validate ".
+        #                  format(server_path)],
+        #                  stdout=subprocess.PIPE,
+        #                  stderr=subprocess.STDOUT,
+        #                  shell=True,
+        #                  bufsize=0)
 
     def quit(self):
         self.app.instance().quit()
