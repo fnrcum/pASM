@@ -6,7 +6,7 @@ from PyQt5 import uic
 from PyQt5 import QtWebEngineWidgets, QtWebEngine, QtWebEngineCore
 import subprocess
 import urllib.request as _req
-import tarfile
+import zipfile
 
 uiFile = "pixArk.ui"
 
@@ -24,16 +24,16 @@ class Example(QWidget):
         self.steam_cmd = os.path.expanduser("~/Desktop/steamcmd")
         if not os.path.isdir(self.steam_cmd):
 
-            url = 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_osx.tar.gz'
-            response = _req.urlopen(url).read()
+            url = 'http://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip'
+            response = _req.urlopen(url)
             zip_data = response.read()
-            download_save_location = os.path.expanduser("~/Downloads/steamcmd.tar.gz")
+            download_save_location = os.path.expanduser("~/Downloads/steamcmd.zip")
             output = open(download_save_location, 'wb')
             output.write(zip_data)
             output.close()
-            with tarfile.open(download_save_location) as tar:
-                tar.extractall(path=self.steam_cmd)
-                tar.close()
+            with zipfile.ZipFile(download_save_location, 'r') as zip:
+                zip.extractall(path=self.steam_cmd)
+                zip.close()
         self.init_UI()
 
     def init_UI(self):
@@ -51,10 +51,18 @@ class Example(QWidget):
         server_pass = self.server_pass.text()
         admin_pass = self.admin_pass.text()
         players_no = self.players_no.text()
-        os.chdir(self.steam_cmd)
-        subprocess.Popen(["\\ShooterGame\\Binaries\\Win64\\ShooterGameServer.exe", config + " " + params],
-                         stdout=PIPE,
-                         stderr=STDOUT,
+        if not os.path.isdir(server_path):
+            os.chdir(self.steam_cmd)
+            subprocess.Popen(["start steamcmd.exe +login anonymous +force_install_dir {0} +app_update 824360 validate ".
+                             format(server_path)],
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT,
+                             shell=True,
+                             bufsize=0)
+        subprocess.Popen(["start steamcmd.exe +login anonymous +force_install_dir {0} +app_update 824360 validate ".
+                         format(server_path)],
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT,
                          shell=True,
                          bufsize=0)
 
